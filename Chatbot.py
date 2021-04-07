@@ -9,12 +9,27 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import random
+from textblob import TextBlob
+import warnings
+
+warnings.filterwarnings("ignore")
 
 file = FileLoader("reuters_headlines.csv")
 data = file.read_file()
+data.insert(data.shape[1], 'Sentiment', 0)
 
-print(data.info())
+for i in range(len(data)):
+    corpus = TextBlob(data['Headlines'][i] + ' ' + data['Description'][i])
+    if(corpus.sentiment.polarity > 0):
+        data['Sentiment'][i] = "Positive"
+    elif(corpus.sentiment.polarity < 0):
+        data['Sentiment'][i] = "Negative"
+    else:
+        data['Sentiment'][i] = "Neutral"
 
+# print(data.info())
+# print(data.Sentiment.value_counts())
+data_copy = data.copy()
 preprocessed_data = Preprocessing(data)
 preprocessed_data.error_cleaning("Headlines")
 preprocessed_data.error_cleaning("Description")
@@ -41,7 +56,7 @@ def give_reply(user_input, sentence_list):
      similar_sentence_number1 =similarity_values.argsort()[0][-2]
      similar_sentence_number2 = similarity_values.argsort()[0][-3]
      similar_sentence_number3 = similarity_values.argsort()[0][-4]
-     print("similar_sentence_number",similar_sentence_number1,similar_sentence_number2,similar_sentence_number3)
+     # print("similar_sentence_number",similar_sentence_number1,similar_sentence_number2,similar_sentence_number3)
      similar_vectors = similarity_values.flatten()
      similar_vectors.sort()
      matched_vector = similar_vectors[-2]
@@ -49,7 +64,7 @@ def give_reply(user_input, sentence_list):
          chatbot_response = chatbot_response+"I am sorry! I don't understand you"
          return chatbot_response
      else:
-         chatbot_response = chatbot_response + ' '.join(data['Headlines'][similar_sentence_number1]) +'\n' + ' '.join(data['Description'][similar_sentence_number1]) +'\n\n' + ' '.join(data['Headlines'][similar_sentence_number2]) +'\n' + ' '.join(data['Description'][similar_sentence_number2]) +'\n\n' + ' '.join(data['Headlines'][similar_sentence_number3]) +'\n' + ' '.join(data['Description'][similar_sentence_number3])+ '\n\n'
+         chatbot_response = chatbot_response + ''.join(data_copy['Headlines'][similar_sentence_number1]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number1]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number1]) + '\n\n' + ''.join(data_copy['Headlines'][similar_sentence_number2]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number2]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number2]) + '\n\n' + ''.join(data_copy['Headlines'][similar_sentence_number3]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number3]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number3])+ '\n\n '
          return chatbot_response
 
 
@@ -69,7 +84,7 @@ while(continue_discussion == True):
     print("Do you want to search by headings or by content? (1 for heading and 2 for content)")
     user_input = input()
     correct_selection = False
-    print(correct_selection)
+    # print(correct_selection)
     while(correct_selection == False):
         if user_input == '1' or user_input == '2':
             search_type = user_input
