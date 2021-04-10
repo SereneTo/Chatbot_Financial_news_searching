@@ -11,6 +11,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 import random
 from textblob import TextBlob
 import warnings
+import tkinter
+from tkinter import *
+
 
 warnings.filterwarnings("ignore")
 
@@ -64,7 +67,9 @@ def give_reply(user_input, sentence_list):
          chatbot_response = chatbot_response+"I am sorry! I don't understand you"
          return chatbot_response
      else:
-         chatbot_response = chatbot_response + ''.join(data_copy['Headlines'][similar_sentence_number1]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number1]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number1]) + '\n\n' + ''.join(data_copy['Headlines'][similar_sentence_number2]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number2]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number2]) + '\n\n' + ''.join(data_copy['Headlines'][similar_sentence_number3]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number3]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number3])+ '\n\n '
+         chatbot_response = chatbot_response + str(data_copy['Headlines'][similar_sentence_number1]) + "\nSentiment: " + str(data_copy['Sentiment'][similar_sentence_number1]) + '\n' + str(data_copy['Description'][similar_sentence_number1]) + '\n\n' + str(data_copy['Headlines'][similar_sentence_number2]) + "\nSentiment: " + str(data_copy['Sentiment'][similar_sentence_number2]) + '\n' + str(data_copy['Description'][similar_sentence_number2]) + '\n\n' + str(data_copy['Headlines'][similar_sentence_number3]) + "\nSentiment: " + str(data_copy['Sentiment'][similar_sentence_number3]) + '\n' + str(data_copy['Description'][similar_sentence_number3])+ '\n\n '
+
+         # chatbot_response = chatbot_response + ''.join(data_copy['Headlines'][similar_sentence_number1]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number1]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number1]) + '\n\n' + ''.join(data_copy['Headlines'][similar_sentence_number2]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number2]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number2]) + '\n\n' + ''.join(data_copy['Headlines'][similar_sentence_number3]) + "    Sentiment: " + ''.join(data_copy['Sentiment'][similar_sentence_number3]) + '\n' + ''.join(data_copy['Description'][similar_sentence_number3])+ '\n\n '
          return chatbot_response
 
 
@@ -78,41 +83,129 @@ def reply_greeting(text, greeting_input_texts, greeting_replie_texts):
             return random.choice(greeting_replie_texts)
 
 
-continue_discussion = True
-print("Hello, I am a chatbot, I will answer your queries regarding financial news:")
-while(continue_discussion == True):
-    print("Do you want to search by headings or by content? (1 for heading and 2 for content)")
-    user_input = input()
-    correct_selection = False
-    # print(correct_selection)
-    while(correct_selection == False):
-        if user_input == '1' or user_input == '2':
-            search_type = user_input
-            correct_selection = True
-        elif(user_input == 'bye'):
-            print("Chatbot: Take care, bye ..")
+# # with Console
+# continue_discussion = True
+# print("Hello, I am a chatbot, I will answer your queries regarding financial news:")
+# while(continue_discussion == True):
+#     print("Do you want to search by headings or by content? (1 for heading and 2 for content)")
+#     user_input = input()
+#     correct_selection = False
+#     # print(correct_selection)
+#     while(correct_selection == False):
+#         if user_input == '1' or user_input == '2':
+#             search_type = user_input
+#             correct_selection = True
+#         elif(user_input == 'bye'):
+#             print("Chatbot: Take care, bye ..")
+#             quit()
+#         else:
+#             print("please input 1 or 2.")
+#             user_input = input()
+#     print("What do you want to know?")
+#     user_input = input()
+#     user_input = user_input.lower()
+#     if(user_input !='bye'):
+#         if(user_input =='thanks' or user_input =='thank you very much'  or user_input =='thank you'):
+#             continue_discussion=False
+#             print("Chatbot: Most welcome")
+#         else:
+#             if(reply_greeting(user_input, greeting_input_texts, greeting_replie_texts)!=None):
+#                 print("Chatbot: "+reply_greeting(user_input, greeting_input_texts, greeting_replie_texts))
+#             else:
+#                 print("Chatbot: ",end="")
+#                 if(search_type == '1' ):
+#                     print(give_reply(user_input, sentence_headlines))
+#                     sentence_headlines.remove(user_input)
+#                 else:
+#                     print(give_reply(user_input, sentence_description))
+#                     sentence_description.remove(user_input)
+#     else:
+#         continue_discussion=False
+#         print("Chatbot: Take care, bye ..")
+
+
+
+correct_input = False
+search_type = 0
+def getResponse(user_input):
+    global correct_input
+    global search_type
+
+    if (user_input != 'bye'):
+        if (user_input == 'thanks' or user_input == 'thank you very much' or user_input == 'thank you'):
             quit()
+        elif reply_greeting(user_input, greeting_input_texts, greeting_replie_texts)!=None:
+            response = reply_greeting(user_input, greeting_input_texts, greeting_replie_texts)
+            return response
+
         else:
-            print("please input 1 or 2.")
-            user_input = input()
-    print("What do you want to know?")
-    user_input = input()
-    user_input = user_input.lower()
-    if(user_input !='bye'):
-        if(user_input =='thanks' or user_input =='thank you very much'  or user_input =='thank you'):
-            continue_discussion=False
-            print("Chatbot: Most welcome")
-        else:
-            if(reply_greeting(user_input, greeting_input_texts, greeting_replie_texts)!=None):
-                print("Chatbot: "+reply_greeting(user_input, greeting_input_texts, greeting_replie_texts))
-            else:
-                print("Chatbot: ",end="")
-                if(search_type == '1' ):
-                    print(give_reply(user_input, sentence_headlines))
-                    sentence_headlines.remove(user_input)
+            if correct_input == False:
+                if user_input == '1' or user_input == '2':
+                    search_type = int(user_input)
+                    correct_input = True
+                    response = "What do you want to know?"
+                    return response
+
                 else:
-                    print(give_reply(user_input, sentence_description))
+                    response = "please input 1 or 2."
+                    search_type = 0
+                    return response
+            else:
+                if search_type == 1:
+                    user_input = user_input.lower()
+                    response = give_reply(user_input, sentence_headlines)
+                    sentence_headlines.remove(user_input)
+                    search_type = 0
+                    correct_input = False
+                    return response
+                elif search_type == 2:
+                    user_input = user_input.lower()
+                    response = give_reply(user_input, sentence_description)
                     sentence_description.remove(user_input)
+                    search_type = 0
+                    correct_input = False
+                    return response
+                else:
+                    response = "Something wrong happened."
+                    search_type = 0
+                    correct_input = False
+                    return response
     else:
-        continue_discussion=False
-        print("Chatbot: Take care, bye ..")
+        quit()
+
+
+# with GUI
+base = Tk()
+base.title("Hello")
+base.geometry("400x500")
+base.resizable(width=FALSE, height=FALSE)
+EntryBox = Text(base, bd=0, bg="white",width="29", height="5", font="Arial")
+ChatLog = Text(base, bd=0, bg="white", height="8", width="50", font="Arial",)
+ChatLog.insert(END, "Bot: " + "\nHello, I am a chatbot, I will answer your queries regarding financial news. Do you want to search by headings or by content? (1 for heading and 2 for content)" + '\n\n')
+ChatLog.config(state=DISABLED)
+scrollbar = Scrollbar(base, command=ChatLog.yview, cursor="heart")
+ChatLog['yscrollcommand'] = scrollbar.set
+
+
+def send():
+    msg = EntryBox.get("1.0",'end-1c').strip()
+    EntryBox.delete("0.0",END)
+    if msg != '':
+        ChatLog.config(state=NORMAL)
+        ChatLog.insert(END, "You: " + '\n' + msg + '\n\n')
+        ChatLog.config(foreground="#442265", font=("Verdana", 12))
+        res = getResponse(msg)
+        ChatLog.insert(END, "Bot: " + '\n' + res + '\n\n')
+        ChatLog.config(state=DISABLED)
+        ChatLog.yview(END)
+
+SendButton = Button(base, font=("Verdana",12,'bold'), text="Send", width="12", height=5,
+                    bd=0, bg="green", activebackground="#3c9d9b",fg='black',
+                    command= send )
+
+scrollbar.place(x=376,y=6, height=386)
+ChatLog.place(x=6,y=6, height=386, width=370)
+EntryBox.place(x=128, y=401, height=90, width=265)
+SendButton.place(x=6, y=401, height=90)
+base.mainloop()
+
